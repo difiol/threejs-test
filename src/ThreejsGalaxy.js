@@ -3,12 +3,20 @@ import * as THREE from 'three';
 import * as dat from 'dat.gui'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
+import particleImage from './assets/particles/circle_05.png'
+
 export default function ThreejsGalaxy() {
 
 /*
 	*** SETUP ***
  */
 const scene = new THREE.Scene()
+
+const textureLoader = new THREE.TextureLoader()
+const particleTexture = textureLoader.load(particleImage)
+
+console.log(particleTexture.image)
+
 const gui = new dat.GUI() 
 const galaxy = useRef(null)
 const sizes = {
@@ -17,7 +25,7 @@ const sizes = {
 }
 const parameters = {}  //Parameters for the Galaxy
 parameters.count = 100000
-parameters.size = 0.01
+parameters.size = 0.25
 parameters.radius = 10
 parameters.branches = 4
 parameters.spin = 1  //Branch bending
@@ -86,13 +94,16 @@ const generateGalaxy = () =>{
 	//Geometry
 	geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3))
 	geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3))
+
 	//Material
 	material = new THREE.PointsMaterial({
 		size: parameters.size,
 		sizeAttenuation: true,
+		map: particleTexture,
 		depthWrite: false,
 		blending: THREE.AdditiveBlending,
-		vertexColors: true
+		vertexColors: true,
+		transparent: true
 	})
 	//Points
 	points = new THREE.Points(geometry, material)
@@ -101,7 +112,7 @@ const generateGalaxy = () =>{
 }
 //Add tweaks to GUI
 gui.add(parameters, 'count').min(100).max(1000000).step(100).onFinishChange(generateGalaxy)
-gui.add(parameters, 'size').min(0.001).max(0.1).step(0.001).onFinishChange(generateGalaxy)
+gui.add(parameters, 'size').min(0.01).max(0.6).step(0.005).onFinishChange(generateGalaxy)
 gui.add(parameters, 'radius').min(0.01).max(20).step(0.01).onFinishChange(generateGalaxy)
 gui.add(parameters, 'branches').min(2).max(20).step(1).onFinishChange(generateGalaxy)
 gui.add(parameters, 'spin').min(-5).max(5).step(0.001).onFinishChange(generateGalaxy)
@@ -168,7 +179,7 @@ tick()
 
 	return(
 		<div>
-			<canvas className="webgl" id='galaxy-canvas' ref={galaxy}></canvas>
+			<canvas ref={galaxy}></canvas>
 		</div>
 	);
 }
