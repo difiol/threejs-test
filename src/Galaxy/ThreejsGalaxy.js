@@ -3,7 +3,7 @@ import * as THREE from 'three';
 import * as dat from 'dat.gui'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
-import particleImage from './assets/particles/circle_05.png'
+import particleImage from '../assets/particles/circle_05.png'
 
 export default function ThreejsGalaxy() {
 
@@ -15,7 +15,6 @@ const scene = new THREE.Scene()
 const textureLoader = new THREE.TextureLoader()
 const particleTexture = textureLoader.load(particleImage)
 
-console.log(particleTexture.image)
 
 const gui = new dat.GUI() 
 const galaxy = useRef(null)
@@ -103,7 +102,7 @@ const generateGalaxy = () =>{
 		depthWrite: false,
 		blending: THREE.AdditiveBlending,
 		vertexColors: true,
-		transparent: true
+		//transparent: true
 	})
 	//Points
 	points = new THREE.Points(geometry, material)
