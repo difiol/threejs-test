@@ -20,7 +20,7 @@ void main()
     float angleOffset = (1.0 / distanceToCenter) *uTime * 0.5;
     angle += angleOffset;
     modelPosition.x = cos(angle) * distanceToCenter;
-    modelPosition.y = distanceToCenter * 2.0;
+    modelPosition.y = distanceToCenter * 4.0;
     modelPosition.z = sin(angle) * distanceToCenter;
 
     //Randomness

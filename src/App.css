@@ -2,20 +2,8 @@
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
 .App-header {
   background-color: #282c34;
-  min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -28,11 +16,53 @@
   color: #61dafb;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+
+.title {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+  color: #10486e;
+  font-family: XenGalaxy;
+  font-size: 4vw;
+  opacity: 0;
+}
+
+.subtitle{
+  margin-top: -6vw;
+  font-size: 1.2vw;
+  text-align: right;
+  color: #2d63aa;
+  font-family: sans-serif;
+  font-weight: bold;
+  text-shadow: 1px 0 0 #000, -1px 0 0 #000, 0 1px 0 #000, 0 -1px 0 #000, 1px 1px #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000;
+}
+
+a {
+  text-decoration: none;
+  color: #2d63aa;
+}
+
+/*
+  TEXTURE
+*/
+.texture-text {
+  background: url(https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/f49e62e3-9d09-4452-a762-f750621d25bd/d77gh18-80e0517b-252c-40f5-95cc-c0d2f0a3bf58.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcL2Y0OWU2MmUzLTlkMDktNDQ1Mi1hNzYyLWY3NTA2MjFkMjViZFwvZDc3Z2gxOC04MGUwNTE3Yi0yNTJjLTQwZjUtOTVjYy1jMGQyZjBhM2JmNTguanBnIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.RMaz2qU-sIFa9O1CcV0i5augrp-v6-DwmVD1pPtbfdI) no-repeat center center;
+  background-size: cover;
+  color: #fff;
+  -webkit-text-fill-color:transparent;
+  -webkit-background-clip: text;
+  -moz-background-clip:text;
+  background-clip:text;
+  text-align:center;
+ }
+
+@media only screen and (max-width: 600px) {
+  .title {
+    font-size: 7vw;
   }
-  to {
-    transform: rotate(360deg);
+  .subtitle {
+    margin-top: -10vw;
+    font-size: 2vw;
   }
 }
