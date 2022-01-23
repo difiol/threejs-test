@@ -1,19 +1,18 @@
 import React, { useEffect, useRef } from "react";
 import * as THREE from "three";
-import * as dat from "dat.gui";
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+//import * as dat from "dat.gui";
+//import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js'
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js'
-import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js'
+//import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js'
 import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js'
 import { RGBShiftShader } from 'three/examples/jsm/shaders/RGBShiftShader.js'
 
 import { vertexShader } from "./shader/vertex";
 import { fragmentShader } from "./shader/fragment";
-import { Vector2 } from "three";
 
-import Stats from 'stats.js';
+//import Stats from 'stats.js';
 
 export default function ThreejsGalaxyAnimated(props) {
   const revealText = props.revealText;
@@ -21,6 +20,8 @@ export default function ThreejsGalaxyAnimated(props) {
   /*
    *** SETUP ***
    */
+  const TWEEN = require('@tweenjs/tween.js')
+
   const scene = new THREE.Scene();
 
   //const gui = new dat.GUI();
@@ -31,7 +32,7 @@ export default function ThreejsGalaxyAnimated(props) {
   };
   const parameters = {}; //Parameters for the Galaxy
   parameters.count = 1000000;
-  parameters.size = 100.0;
+  parameters.size = 120.0;
   parameters.radius = 11;
   parameters.branches = 8;
   parameters.spin = -0.2; //Branch bending
@@ -215,18 +216,19 @@ export default function ThreejsGalaxyAnimated(props) {
     const renderPass = new RenderPass(scene, camera);  //Similar to the renderer
     composer.addPass(renderPass);  //Add the Render Pass to the Effect Composer
 
-    const unrealBloomPass = new UnrealBloomPass();
-    unrealBloomPass.resolution = new Vector2(sizes.width, sizes.height);
-    unrealBloomPass.strength = 1.5;  //Strength of the glow
-    unrealBloomPass.radius = 0.4;  //Length of brightness spread
-    unrealBloomPass.threshold = 0.90;  //At what luminosity the glow starts
-    composer.addPass(unrealBloomPass);
+    //GLOW
+    // const unrealBloomPass = new UnrealBloomPass();
+    // unrealBloomPass.resolution = new Vector2(sizes.width, sizes.height);
+    // unrealBloomPass.strength = 2;  //Strength of the glow
+    // unrealBloomPass.radius = 0.4;  //Length of brightness spread
+    // unrealBloomPass.threshold = 0.90;  //At what luminosity the glow starts
+    // composer.addPass(unrealBloomPass);
 
+    //SHIFT
     const rgbShiftPass = new ShaderPass(RGBShiftShader);
-    rgbShiftPass.uniforms.amount.value = 0.0;
+    rgbShiftPass.uniforms.amount.value = 0.01;
     composer.addPass(rgbShiftPass);
 
-    
 
     /*** Add tweaks to GUI ***/
     // gui
@@ -273,7 +275,7 @@ export default function ThreejsGalaxyAnimated(props) {
      */
     let mouseX = 0;
     const windowHalfX = window.innerWidth / 2;
-    const windowHalfY = window.innerHeight / 2;
+    //const windowHalfY = window.innerHeight / 2;
 
     const onDocumentMouseMove = (event) => {
       //Cuando se mueva el raton se cambia el valor de mouseX y mouseY
@@ -285,18 +287,50 @@ export default function ThreejsGalaxyAnimated(props) {
     /***
      *  MONITORING
      */
-     const stats = new Stats();
+     /*const stats = new Stats();
      stats.showPanel( 0 ); // 0: fps, 1: ms, 2: mb, 3+: custom
-    document.body.appendChild( stats.dom );
+    document.body.appendChild( stats.dom );*/
 
     /*
      *** ANIMATION ***
      */
+
+    //TWEEN ANIMATIONS
+    new TWEEN.Tween(rgbShiftPass.uniforms.amount)
+     .to(
+         {
+             value: 0
+         },
+         5000
+     )
+     .easing(TWEEN.Easing.Quintic.Out)
+     .start()
+
+    new TWEEN.Tween(camera.position)
+     .to(
+         {
+             y: 22
+         },
+         25000
+     )
+     .easing(TWEEN.Easing.Cubic.Out)
+     .start()
+
+    new TWEEN.Tween(camera.position)
+     .to(
+         {
+             z: -4
+         },
+         10000
+     )
+     .easing(TWEEN.Easing.Cubic.InOut)
+     .delay(4000)
+     .start()
+
     const clock = new THREE.Clock();
-    let zTime = 0;
 
     const tick = () => {
-      stats.begin();
+      //stats.begin();
 
       const elapsedTime = clock.getElapsedTime();
 
@@ -305,23 +339,12 @@ export default function ThreejsGalaxyAnimated(props) {
       if (material.uniforms.uSize.value > 60)
         material.uniforms.uSize.value -= 0.2;
 
-      //Update Camera position
-      const t = elapsedTime / 100;
-      const a = -10;
-      const v = Math.sqrt(50000 ^ (2 + 2 * a * t));
-      if (camera.position.y > 25) {
-        camera.position.y = 50 - v * t + 0.5 * a * t * t;
-      }
+      //Update Tween animations
+      TWEEN.update()
 
-      if (camera.position.y < 35 && camera.position.z > -4) {
-        zTime += 1 / 20000;
-        const vZ = Math.sqrt(50000 ^ (2 + 2 * a * zTime));
-        camera.position.z = (-1 - vZ * zTime + 0.5 * -a * zTime * zTime)
+      if (camera.position.y < 35) {
         revealText();
       }
-
-      //Update Pass
-      rgbShiftPass.uniforms.amount.value = 0.01 * (Math.cos(elapsedTime * 2 * Math.PI) + 1)/2;
 
       camera.position.x = mouseX * 0.001; //X position according to the mouse
       //Render
@@ -331,7 +354,7 @@ export default function ThreejsGalaxyAnimated(props) {
       //Call tick again on the next frame
       window.requestAnimationFrame(tick);
 
-      stats.end();
+      //stats.end();
     };
     tick();
   }, [galaxyCanvas]);
